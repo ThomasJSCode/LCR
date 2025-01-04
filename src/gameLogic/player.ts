@@ -30,14 +30,16 @@ class Player {
 
     play(gameManager: GameManager) {
         if (!this.disqualified) {
-            for (let i = 0; i < this.numberOfRolls(); i++) {
+            const rolls = this.numberOfRolls();
+            for (let i = 0; i < rolls; i++) {
                 const numberRolled = this.roll()!
+                console.log("Player " + this.playerId + " rolled " + numberRolled)
                 this.distributeChips(numberRolled, gameManager);
 
                 if (this.isHighRiskMode() && this.centersRolled == 3) {
                     this.disqualify();
                 }
-
+                
                 this.centersRolled = 0;
             }
         }
@@ -73,12 +75,17 @@ class Player {
         }
     }
     
-    hasMoney(): boolean {return this.chips > 0}
+    hasMoney(): boolean {return this.chips > 0};
+
+    getPlayerId(): number {return this.playerId};
+
+    getChips(): number {return this.chips};
 
     private disqualify() {this.disqualified = true}
 
     private forfeitChipToPlayer(otherPlayer: Player) {
         if (this.hasMoney()) {
+            console.log("Player " + this.playerId + " forfeits a chip to player " + otherPlayer.getPlayerId() + ".")
             otherPlayer.chips += 1;
             this.chips -= 1;
         }
@@ -86,6 +93,7 @@ class Player {
 
     private forfeitChipToPot(gameManager: GameManager) {
         if (this.hasMoney()) {
+            console.log("Player " + this.playerId + " forfeits a chip to the pot.")
             gameManager.addChipToPot();
             this.chips -= 1;
         }
@@ -116,6 +124,7 @@ class Player {
         }
     }
 
+    // Assumed by the base game logic, but I added this *just in case*
     private isNormalMode(): boolean {return this.gameManager.getGameMode() == GameMode.Modes.NORMAL};
 
     private isHighRiskMode(): boolean {return this.gameManager.getGameMode() == GameMode.Modes.HIGH_RISK};
