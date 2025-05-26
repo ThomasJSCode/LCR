@@ -1,27 +1,29 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Tooltip } from 'react-tooltip'
 import './GameStartup.css'
-import Player from '../gameLogic/player'
+import { Navigate } from "react-router-dom";
 
 
 const GameStartup = () => {
 
-    const [playerCount, setPlayerCount] = useState('')
+    const [playerCount, setPlayerCount] = useState(0)
     const [gameMode, setGameMode] = useState('')
     const [gameStartupPrompt, setGameStartupPrompt] = useState('')
     const [setupIsValid, setSetupIsValid] = useState(false)
+    const [gameIsReady, setGameReadiness] = useState(false)
 
     const startupDialog = useRef<HTMLDialogElement>(null)
+
 
     const handlePlayerCountChange = (e: ChangeEvent<HTMLInputElement>) => {
         // Regex sorcery to replace non-numerical values
         const numericalValue = e.target.value.replace(/\D/g, "")
-        setPlayerCount(numericalValue)
+        setPlayerCount(parseInt(numericalValue))
     }
 
     const validateGameSettings = () => {
 
-        if (playerCount === '' || parseInt(playerCount) < 2) {
+        if (playerCount === 0 || playerCount < 2) {
             setGameStartupPrompt("You need at least two players to start a game.")
             setSetupIsValid(false) // In case it was valid beforehand
             return
@@ -53,8 +55,16 @@ const GameStartup = () => {
 
     const handleRenderStartButton = () => {
         if (setupIsValid) {
-            return <button onClick={() => (console.log("unimplemented"))}>Start</button>
+            return (
+                <button onClick={() => (startTheGame())}>Start</button>
+            )
         }
+    }
+
+    const startTheGame = () => {
+        handleDialog()
+        setGameReadiness(true)
+        // From here, the Navigate component will handle the rest
     }
 
     return (
@@ -139,14 +149,14 @@ const GameStartup = () => {
                 {/* Game startup dialog */}
                 <dialog className="startupDialog" ref={startupDialog}> {gameStartupPrompt}
                     <div className="spacing">
-                        {handleRenderStartButton()}
                         <a>
+                            {setupIsValid && handleRenderStartButton()}
                             <button onClick={() => handleDialog()}>Cancel</button>
                         </a>
                     </div>
                 </dialog>
-
             </div>
+            {gameIsReady && <Navigate to="/gameSession" state={playerCount} />}
         </>
     )
 }

@@ -6,6 +6,7 @@ import './index.css'
 import MainPage from './pages/MainPage.tsx'
 import GameStartup from './pages/GameStartup.tsx'
 import LostPage from './pages/LostPage.tsx'
+import GameManager from './gameLogic/gameManager.tsx'
 
 const browserRouter = createBrowserRouter(
   [
@@ -19,8 +20,8 @@ const browserRouter = createBrowserRouter(
       element: <GameStartup />
     },
     {
-      path: '/rclGameSession',
-      element: <></> // TODO
+      path: '/gameSession',
+      element: <GameManager/>
     }
   ]
 )
